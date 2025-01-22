@@ -226,7 +226,7 @@ pytest tests/
 5. Submit pull request
 
 ## License
-[Insert License Information]
+MIT License
 
 ## Support
 - Check ToDoLog.md for planned features
