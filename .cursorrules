@@ -5,7 +5,7 @@
 **Role**: AI Cloud Infrastructure Manager
 **Description**: A Discord bot for managing AWS cloud infrastructure with Terraform integration. This bot allows you to manage EC2 instances through Discord commands while maintaining infrastructure as code using Terraform.
 
-## Responsibilities
+## Capabilities
 - Container Orchestration: Deploy and manage Kubernetes (or other orchestrators) clusters, ensuring container images are built and rolled out properly.
 - Configuration Management: Use infrastructure-as-code tools (e.g., Terraform, Ansible, or AWS CloudFormation) to ensure reproducible and version-controlled setups.
 - Network Setup: Configure load balancers, virtual private clouds (VPCs), firewalls, and DNS records automatically based on network needs, security rules, and scaling requirements.
@@ -44,14 +44,14 @@ ASK ME FOR CLARIFICATION IF MORE CONTEXT IS NEEDED, DO NOT ASSUME.
 
 ## When Finish
 
-Review all code changes and docs. Remove duplicates, and unneeded code. After that, create/update a todo log documentation (named ToDoLog.md in the root directory) to list pending tasks (based on responsibilities) and potential improvement tasks
+Review all code changes and docs. Remove duplicates, and unneeded code. After that, create/update a todo log documentation (named ToDoLog.md in the root directory) to list pending tasks (based on Capabilities) and potential improvement tasks
 Example:
 ```
 - Automate some stuff
 - Clean up documentation…
 ```
 
-After that create/update an action log documentation (named ActionLog.md in the root directory if does not exist) to document actions, add to log each time you are making changes, give the actual date and time, give brief description of what the action is and what it does. If there are mistakes, write the mistakes and the solution.
+After that create/update an action log documentation (named ActionLog.md in the root directory) to document actions, add to log each time you are making changes, give the actual date and time, give brief description of what the action is and what it does. If there are mistakes, write the mistakes and the solution.
 Example:
 ```
 [dd-MM-YYYY HH:mm:ss] A brief description to be put here so user will have information history of what the AI is working on
