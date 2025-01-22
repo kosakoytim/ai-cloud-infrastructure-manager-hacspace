@@ -1,201 +1,237 @@
-A Discord bot for managing AWS cloud infrastructure with Terraform integration. This bot allows you to manage EC2 instances through Discord commands while maintaining infrastructure as code using Terraform.
+# Saturn - AI Cloud Infrastructure Manager
 
-## Current Features
+A powerful Discord bot for managing AWS cloud infrastructure and Docker containers with integrated monitoring and alerting capabilities. Saturn provides a seamless interface for managing cloud resources, containers, and infrastructure monitoring through Discord commands.
 
-### Discord Bot Commands
-- `/aws_test` - Test AWS connectivity and verify instance access
-- `/instance action:status` - Get detailed instance status including:
-  - Instance state with visual indicators
-  - Public IP address (when running)
-  - Instance type and launch time
-  - SSH connection details
-  - Instance tags
-- `/instance action:start` - Start the EC2 instance with progress tracking
-- `/instance action:stop` - Stop the EC2 instance with progress tracking
+## Features
 
-### Infrastructure (Terraform)
-- EC2 instance management:
-  - Instance type: t2.micro
-  - OS: Ubuntu 22.04 LTS
-  - Automatic public IP assignment
-  - Instance tagging
-- Security:
-  - Dedicated security group
-  - SSH access (port 22)
-  - Secure key pair management
-- Infrastructure as Code:
-  - Modular Terraform configuration
-  - State management
-  - Resource tagging
+### AWS Infrastructure Management
+- **EC2 Instance Control**
+  - `/instance start` - Start EC2 instance
+  - `/instance stop` - Stop EC2 instance
+  - `/instance status` - Get detailed instance status
+  - `/aws_test` - Test AWS connectivity
 
-## Project Structure
+### Docker Container Management
+- **Container Operations**
+  - `/containers` - List all Docker containers with status
+  - `/docker start <container>` - Start a container
+  - `/docker stop <container>` - Stop a container
+  - `/logs <container> [lines]` - View container logs
+  - `/alerts` - Check container resource alerts
+
+### Monitoring & Metrics
+- **Resource Monitoring**
+  - `/metrics` - Get current system metrics
+  - Automated resource usage alerts
+  - Prometheus & Grafana integration
+  - Real-time container statistics
+
+### Automated Alerting
+- Configurable resource thresholds
+- Automatic alert channel detection
+- CPU and memory usage monitoring
+- Real-time alert notifications
+
+## Architecture
+
+### Components
+1. **Discord Bot (saturn_bot/)**
+   - Command handling and user interaction
+   - Asynchronous operation management
+   - Error handling and response formatting
+
+2. **Infrastructure Tools (saturn_bot/src/tools/)**
+   - `aws_manager.py` - AWS infrastructure operations
+   - `docker_manager.py` - Docker container management
+   - `metrics_manager.py` - System metrics collection
+
+3. **Monitoring Stack**
+   - Prometheus for metrics collection
+   - Grafana for visualization
+   - Node Exporter for system metrics
+   - Custom alert thresholds
+
+### Directory Structure
 ```
-.
-├── terraform/                  # Infrastructure as Code
-│   ├── main.tf                # Main Terraform configuration
-│   ├── provider.tf            # AWS provider configuration
-│   ├── outputs.tf             # Terraform outputs
-│   ├── saturn-key            # SSH private key (keep secure!)
-│   ├── saturn-key.pub        # SSH public key
-│   └── modules/
-│       └── ec2/              # EC2 instance module
-│           ├── main.tf       # Instance and security group
-│           ├── variables.tf  # Module variables
-│           └── outputs.tf    # Module outputs
-├── saturn_bot/                # Discord Bot
-│   └── src/
-│       ├── bot/
-│       │   └── saturn_bot.py # Discord bot implementation
-│       └── tools/
-│           └── aws_manager.py # AWS management tools
-└── .env                      # Environment variables
+saturn_bot/
+├── src/
+│   ├── bot/
+│   │   └── saturn_bot.py
+│   └── tools/
+│       ├── aws_manager.py
+│       ├── docker_manager.py
+│       └── metrics_manager.py
+├── docker/
+│   ├── docker-compose.yml
+│   └── prometheus/
+│       └── prometheus.yml
+└── terraform/
+    └── ...
 ```
 
-## Setup and Configuration
+## Setup Instructions
 
 ### Prerequisites
 - Python 3.8 or higher
-- Terraform
-- AWS Account
+- Docker and Docker Compose
+- AWS Account and credentials
 - Discord Bot Token
 
 ### Environment Variables
-Required variables in `.env`:
+Create a `.env` file with:
 ```bash
-# AWS Configuration
-export AWS_ACCESS_KEY_ID=your_access_key
-export AWS_SECRET_ACCESS_KEY=your_secret_key
-export AWS_REGION=us-east-1
-export AWS_INSTANCE_ID=your_instance_id
-
 # Discord Configuration
-export DISCORD_BOT_TOKEN=your_bot_token
-export DISCORD_SERVER_ID=your_server_id
+DISCORD_BOT_TOKEN=your_bot_token
+DISCORD_SERVER_ID=your_server_id
+
+# AWS Configuration
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_REGION=your_region
+AWS_INSTANCE_ID=your_instance_id
+
+# Docker Alert Thresholds (%)
+DOCKER_ALERT_CPU_THRESHOLD=80
+DOCKER_ALERT_MEMORY_THRESHOLD=80
+
+# Prometheus URL (optional)
+PROMETHEUS_URL=http://localhost:9090
 ```
 
 ### Installation
-1. Clone the repository
+
+1. Clone the repository:
+   ```bash
+   git clone <repository_url>
+   cd saturn-bot
+   ```
+
 2. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
-3. Initialize Terraform:
+
+3. Start the monitoring stack:
    ```bash
-   cd terraform
-   terraform init
+   cd saturn_bot/docker
+   docker-compose up -d
    ```
-4. Create infrastructure:
-   ```bash
-   terraform apply
-   ```
-5. Start the Discord bot:
+
+4. Start the bot:
    ```bash
    python saturn_bot/src/bot/saturn_bot.py
    ```
 
-### SSH Access
-Connect to the instance:
-```bash
-ssh -i terraform/saturn-key ubuntu@<instance_ip>
-```
-- Username: `ubuntu`
-- Key location: `terraform/saturn-key`
-- Required permissions: `chmod 400 terraform/saturn-key`
+## Usage Guide
+
+### Basic Commands
+1. Test AWS connectivity:
+   ```
+   /aws_test
+   ```
+
+2. Manage EC2 instance:
+   ```
+   /instance status
+   /instance start
+   /instance stop
+   ```
+
+3. View container status:
+   ```
+   /containers
+   ```
+
+4. Manage containers:
+   ```
+   /docker start container_name
+   /docker stop container_name
+   ```
+
+5. View container logs:
+   ```
+   /logs container_name [number_of_lines]
+   ```
+
+### Monitoring
+1. Check system metrics:
+   ```
+   /metrics
+   ```
+
+2. View alerts:
+   ```
+   /alerts
+   ```
+
+3. Access Grafana dashboard:
+   - Open http://localhost:3000
+   - Default credentials: admin/admin
 
 ## Error Handling
+
 The bot includes comprehensive error handling:
-- AWS credential validation
-- Instance state verification
-- Command execution monitoring
-- Detailed error messages
-- Automatic retry logic for state changes
+- Command validation and synchronization
+- AWS credential verification
+- Docker operation monitoring
+- Automatic alert channel fallback
+- Message length management for logs
 
-## Potential Improvements
+## Security Considerations
 
-### Discord Bot
-1. Additional Instance Commands
-   - Instance reboot
-   - Instance termination
-   - New instance creation
-   - Multiple instance management
+1. **Access Control**
+   - Environment variable management
+   - AWS credential security
+   - Discord server-specific commands
 
-2. Enhanced Status Information
-   - Resource utilization metrics
-   - Cost estimation
-   - CloudWatch alarms integration
-   - Automated status reporting
-
-3. Monitoring Features
-   - Real-time CPU/Memory monitoring
-   - Network traffic analysis
-   - Cost tracking and budgeting
-   - Custom alert thresholds
-
-4. Security Enhancements
-   - Discord role-based access
-   - Command audit logging
-   - Action confirmation prompts
-   - Rate limiting
-
-### Infrastructure
-1. Advanced Resources
-   - Custom VPC configuration
-   - Load balancer setup
-   - Auto-scaling implementation
-   - Database integration
-
-2. Security Improvements
-   - Private subnet deployment
-   - Bastion host configuration
-   - Security group refinement
-   - IAM role optimization
-
-3. Backup and Recovery
-   - Automated EBS snapshots
-   - AMI backup strategy
-   - Disaster recovery planning
-   - Cross-region replication
-
-4. Cost Management
-   - Resource scheduling
-   - Instance size optimization
-   - Cost allocation tagging
-   - Budget alerts
+2. **Resource Protection**
+   - Container resource limits
+   - Alert thresholds
+   - Operation validation
 
 ## Maintenance
 
 ### Regular Tasks
-1. Code Maintenance
-   - Update dependencies
-   - Review security patches
-   - Optimize performance
-   - Update documentation
+1. Monitor alert thresholds
+2. Review container resource usage
+3. Check AWS resource utilization
+4. Update dependencies
+5. Review error logs
 
-2. Infrastructure Updates
-   - Review security groups
-   - Update AMI versions
-   - Check for cost optimizations
-   - Validate backups
+### Troubleshooting
+- Check ActionLog.md for known issues and solutions
+- Review bot console output for errors
+- Verify environment variables
+- Check Discord command synchronization
 
-### Best Practices
-1. Security
-   - Rotate AWS credentials
-   - Update security groups
-   - Monitor access logs
-   - Review permissions
+## Development
 
-2. Cost Management
-   - Monitor usage patterns
-   - Right-size instances
-   - Review unused resources
-   - Set up cost alerts
+### Adding New Features
+1. Create new tool in `src/tools/`
+2. Add command handler in `saturn_bot.py`
+3. Update documentation
+4. Test thoroughly
+5. Update ActionLog.md
+
+### Testing
+```bash
+pytest tests/
+```
 
 ## Contributing
 1. Fork the repository
 2. Create a feature branch
-3. Implement changes
-4. Add tests if applicable
-5. Submit a pull request
+3. Make changes
+4. Add tests
+5. Submit pull request
 
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details. 
+[Insert License Information]
+
+## Support
+- Check ToDoLog.md for planned features
+- Review ActionLog.md for recent changes
+- Submit issues for bugs or feature requests
+
+## Roadmap
+See ToDoLog.md for detailed development plans and future enhancements. 
